@@ -1,0 +1,25 @@
+Backend:
+The server is implemented using the expressjs framework. This allowed for easy routing, and easy integration with Socket.io, which we also used.
+
+Socket.io is used for managing the connections between the players and the server. Compared to a technology like AJAX, Socket.io is faster and also allows for two-way pushes between client and server, which is not the case with AJAX.
+
+Logic:
+The gist of the program: 
+In a multiplayer game, the game is played through mouse clicks, which are emitted from client side sockets to server side sockets. On the server, the moves are checked to see if they are valid, then they are made on the Board, and finally the board is checked for victory or a tie. Then, the results are emitted to the client side sockets, which will update the page to reflect the board. 
+
+In a single player game, after the player makes a move, the results of the move will be sent back immediately, and then there will be a function called to make a move for the AI, the results of which will also be sent to the client to update the page. There is a slight delay between the player move and the AI move to make the gameplay seem more natural. 
+
+More complex overview:
+
+There are 4 files involved in the Connect 4 game:
+Board.js: This contains a Board class that stores the state of the board as an array of arrays. Each index contains an integer. The 2d array is initially filled with 0s, and making moves will put integer tokens representing each player into the board. 
+
+Player.js: This contains a Player class that stores a token for the player and a getMove field. The getMove field contains a function that returns the player's chosen move given the state of the game and board. This allows for swapping the algorithm that a player uses.
+
+GetAIMove.js: This contains a function GetAIMove that is used by AI players. The AI was created using a min-max algorithm. The basic idea is that the best move for a player is the one that results in the worst moves for its opponenet, which results in a natural recursive structure. The AI looks ahead up to 6 turns, and determines the best score it can achieve (The scores are as follows: -1 for guaranteed defeat, 0 for indeterminate or guaranteed draw, 1 for guaranteed win). If the score is 0 or 1, it picks its move at random from a collection of moves that all achieve the score. If the score is -1 (the AI has a forced loss), it will pick the move that prolongs the game as much as possible. 
+As a side note, this is the only funcion that will ever be put into the getMove field of the Player objects. In a previous command line version of the project, human players had a function as well, but in the graphical version of the game, such a function is impractical as moves are made through mouse clicks rather than the console. Therefore, whereas previously the function read input through a Scanner, it now can no longer do that, so a function which prompts for and reads the player's move is not possible. Human players store null in the getMove field instead. 
+
+Game.js: This contains a Game class that stores the state of a Connect Four game. The Game class contains the players as an array of player objects, as well as a Board object. The Game class has a makeMove function, which will input a move into the Board, and it is called in two different ways. Either a player has clicked on the board, in which case the server side socket handles the click event by calling the makeMove function with the specific move, or it is an AI player making a move. In that case, the getMove field of the AI Player is used. After every move, the Game class checks for victory or a tie. 
+
+Frontend:
+The frontend is made in vanilla Javascript, HTML, and CSS, with the exception of the Materialize css framework, which we used for a loading bar.

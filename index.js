@@ -6,12 +6,15 @@ const uuid = require('uuid');
 const Game = require('./game/Game');
 const GetAIMove = require('./game/GetAIMove');
 
+// Makes the public folder accessible to http requests
 app.use('/public', express.static('public'));
 
+// Handles get requests to / by returning index.html
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// Handles all requests to /game by returning game.html
 app.use('/game', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'game.html'));
 })
@@ -19,12 +22,15 @@ app.use('/game', (req, res) => {
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 
-let roomToGame = new Map();
-let roomToSockets = new Map();
-let nextRoom = null;
+let roomToGame = new Map(); // Maps a string representing a room of players to their Game 
+let roomToSockets = new Map(); // Maps a string representing a room of players to their Sockets
+let nextRoom = null; // A string representing the next room available for multiplayer 
 
+// Handles socket events
 io.on('connection', socket => {
     console.log(socket.id + " connected");
+
+    // Handles the event when sockets send options for game creation. opponent is an integer as follows: 1 means the game is multiplayer, 2 means the game is single player. 
     socket.on('gameOptions', (opponent) => {
         if (opponent == 1) {
             if (nextRoom == null) {
@@ -52,7 +58,6 @@ io.on('connection', socket => {
             roomToSockets.set(newRoom, new Set());
             roomToSockets.get(newRoom).add(socket);
             socket.token = Math.floor(Math.random() * 2) + 1;
-            // socket.token = 1;
             let moveGetters = [GetAIMove, GetAIMove];
             moveGetters[socket.token - 1] = null;
             let game = new Game(moveGetters, 7, 6, 4);
@@ -60,10 +65,12 @@ io.on('connection', socket => {
             socket.emit('gameStart');
             if (socket.token == 2) {
                 let result = game.makeMove({ token: socket.token % 2 + 1 });
-                setTimeout(() => socket.emit('move:print', result), 300);
+                setTimeout(() => socket.emit('move:print', result), 100);
             }
         }
     })
+
+    // Handles the event when a socket is attempting to make a move. 
     socket.on('move', function (x) {
         let room = socket.room;
         if (!roomToGame.has(room)) {
@@ -79,6 +86,8 @@ io.on('connection', socket => {
             }
         }
     });
+
+    // Handles the event when a socket disconnects.
     socket.on('disconnect', () => {
         let room = socket.room;
         if (room == null) {

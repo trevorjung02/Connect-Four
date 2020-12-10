@@ -1,5 +1,10 @@
 const Game = require('./Game');
 
+// pre: board is a Board object
+//      token is an integer representing the AI's token 
+//      players is an array of Player objects, representing all the players in the game. 
+//      victoryCondition is an integer representing the number of pieces in a row needed to win
+// post: Returns an integer representing the column (zero-indexed) the AI has chosen.
 function GetAIMove(board, token, players, victoryCondition) {
     let copy = board.copy();
     let moves = computeScore(copy, token, players, victoryCondition, 0).moves;
@@ -8,6 +13,17 @@ function GetAIMove(board, token, players, victoryCondition) {
     return move;
 }
 
+// Helper method for GetAIMove.
+// pre: board is a Board object
+//      token is an integer representing the token of the player currently making a move.
+//      players is an array of Player objects, representing all the players in the game. 
+//      victoryCondition is an integer representing the number of pieces in a row needed to win.
+//      depth is an integer representing how many turns have taken place since the intial turn that GetAIMove was called on. 
+//  post: Returns a Turn object with the following properties: moves, scores, victoryDepth, defeatDepth. 
+//       scores is an integer representing the best score that can be achieved (looking ahead 6 turns). The scores are as follows: -1 if there is guaranteed loss, 0 if indeterminate or guaranteed draw, 1 if guaranteed win. 
+//      moves is an array containing the best possible moves (all with the same score), each element is an integer representing a column-index. 
+//      victoryDepth is an integer representing the minimum number of turns for a guaranteed victory 
+//      defeatDepth is an integer representing the maximum number of turns for a guaranteed defeat
 function computeScore(board, token, players, victoryCondition, depth) {
     if (board.isFull() || depth == 7) {
         return new Turn([0], 0, depth, depth);
@@ -20,7 +36,7 @@ function computeScore(board, token, players, victoryCondition, depth) {
         if (board.makeMove(x, token) == -1) {
             continue;
         }
-        if (Game.victory(x, token, board, victoryCondition)) {
+        if (Game.victory(x, board, victoryCondition)) {
             board.unMakeMove(x);
             return new Turn([x], 1, depth, depth);
         }
@@ -43,13 +59,6 @@ function computeScore(board, token, players, victoryCondition, depth) {
     if (score < 1) {
         defeatDepth = Number.MIN_SAFE_INTEGER;
     }
-    // if (depth <= 1) {
-    //     board.printBoard();
-    //     console.log("Player " + token + " Moves: " + moves.map(x => x + 1) + " Score: " +
-    //         (-score) + " Victory Depth: "
-    //         + victoryDepth + " Defeat Depth: " + defeatDepth);
-    //     console.log("-----");
-    // }
     return new Turn(moves, -score, victoryDepth, defeatDepth);
 }
 
