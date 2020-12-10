@@ -17,5 +17,5 @@ From the main page, you can choose whether to play against a human or an AI. Pre
 You make your move by clicking on the board. It only matters which column you click on, not the specific square.
 When the game ends, there is a popup which leads back to the home page.
 
-On the game page (/game), refreshing your page, closing it, or going back will cause you to leave the game. The game closes instantly once you leave, and other player gets a popup to return to the home page.
+On the game page (/game), refreshing your page, closing it, or going back will cause you to leave the game. The game closes instantly once you leave, and the other player gets a popup to return to the home page.
 You can open multiple tabs on your computer, and each will be able to play as a different user. You can play against yourself this way. 
