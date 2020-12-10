@@ -1,0 +1,50 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #faf8ef;
+}
+
+.grid {
+    display: grid;
+    /* border: 1px solid black; */
+}
+
+header {
+    color: rgba(53, 59, 14, 0.85);
+    font-size: 60px;
+    font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
+    text-align: center;
+}
+
+#content {
+    margin: 0 auto;
+}
+
+#board {
+    grid-template-columns: repeat(7, auto);
+    grid-template-rows: repeat(6, auto);
+    justify-content: center;
+    margin: 2rem;
+}
+
+#turnIndicator {
+    padding: 0;
+    font-size: 20px;
+    color: rgba(53, 59, 14, 0.85);
+    display: none;
+    text-align: center;
+}
+
+#waitingIndicator {
+    text-align: center;
+    visibility: hidden;
+}
+
+.box {
+    height: 10vmin;
+    width: 10vmin;
+    border: 1px solid black;
+    clear: both;
+}

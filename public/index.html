@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/public/game.css">
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <title>Connect Four</title>
+</head>
+
+<body>
+    <header>
+        <b>Connect Four</b>
+    </header>
+    <div class="input-field container">
+        <select>
+            <option value="" disabled selected>Choose your opponent</option>
+            <option value="1">Human</option>
+            <option value="2">AI</option>
+        </select>
+        <label>Game Options</label>
+        <button class="waves-effect waves-light btn" onClick="createGame()">Create Game</button>
+    </div>
+    <script src="/public/index.js"></script>
+</body>
+
+</html>

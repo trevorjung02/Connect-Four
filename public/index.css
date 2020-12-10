@@ -1,0 +1,14 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #faf8ef;
+}
+
+header {
+    color: rgba(53, 59, 14, 0.85);
+    font-size: 60px;
+    font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
+    text-align: center;
+}
