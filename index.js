@@ -1,6 +1,5 @@
 const express = require('express');
 const path = require('path');
-const { rootCertificates } = require('tls');
 const app = express();
 const uuid = require('uuid');
 const Game = require('./game/Game');
@@ -22,7 +21,7 @@ app.use('/game', (req, res) => {
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 
-let roomToGame = new Map(); // Maps a string representing a room of players to their Game 
+let roomToGame = new Map(); // Maps a string representing a room of players to a Game 
 let roomToSockets = new Map(); // Maps a string representing a room of players to their Sockets
 let nextRoom = null; // A string representing the next room available for multiplayer 
 
@@ -32,16 +31,16 @@ io.on('connection', socket => {
 
     // Handles the event when sockets send options for game creation. opponent is an integer as follows: 1 means the game is multiplayer, 2 means the game is single player. 
     socket.on('gameOptions', (opponent) => {
-        if (opponent == 1) {
-            if (nextRoom == null) {
-                nextRoom = uuid.v4();
+        if (opponent == 1) { // Multiplayer
+            if (nextRoom == null) { // No available room with one player in it, create a new room.
+                nextRoom = uuid.v4(); // Generate random unique room name
                 socket.room = nextRoom;
                 roomToSockets.set(nextRoom, new Set());
                 roomToSockets.get(nextRoom).add(socket);
                 socket.token = 1;
                 socket.emit('joined');
             }
-            else {
+            else { // Join existing room with one player
                 socket.room = nextRoom;
                 roomToSockets.get(nextRoom).add(socket);
                 socket.token = 2;
@@ -51,20 +50,20 @@ io.on('connection', socket => {
                 nextRoom = null;
             }
         }
-        else {
+        else { // Single player game
             console.log("Creating Single Player Game");
-            let newRoom = uuid.v4();
+            let newRoom = uuid.v4(); // Create a room with a unique id
             socket.room = newRoom;
             roomToSockets.set(newRoom, new Set());
             roomToSockets.get(newRoom).add(socket);
-            socket.token = Math.floor(Math.random() * 2) + 1;
+            socket.token = Math.floor(Math.random() * 2) + 1; // Randomize player token
             let moveGetters = [GetAIMove, GetAIMove];
-            moveGetters[socket.token - 1] = null;
+            moveGetters[socket.token - 1] = null; // The AI will have a GetAIMove function, the player will not
             let game = new Game(moveGetters, 7, 6, 4);
             roomToGame.set(newRoom, game);
             socket.emit('gameStart');
-            if (socket.token == 2) {
-                let result = game.makeMove({ token: socket.token % 2 + 1 });
+            if (socket.token == 2) { // If the player moves second, play the AI's first move
+                let result = game.makeMove(socket.token % 2 + 1);
                 setTimeout(() => socket.emit('move:print', result), 100);
             }
         }
@@ -76,12 +75,12 @@ io.on('connection', socket => {
         if (!roomToGame.has(room)) {
             return;
         }
-        let result = roomToGame.get(room).makeMove({ x, token: socket.token });
+        let result = roomToGame.get(room).makeMove(socket.token, x); // Makes move on board and stores result
         console.log(result);
         if (result != null) {
             roomToSockets.get(room).forEach(s => s.emit('move:print', result));
-            if (result.state == 0 && roomToSockets.get(room).size == 1) {
-                result = roomToGame.get(room).makeMove({ token: socket.token % 2 + 1 });
+            if (result.state == 0 && roomToSockets.get(room).size == 1) { // If game is single player and has not ended, make AI move
+                result = roomToGame.get(room).makeMove(socket.token % 2 + 1);
                 setTimeout(() => socket.emit('move:print', result), 300);
             }
         }

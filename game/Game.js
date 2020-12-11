@@ -21,14 +21,13 @@ class Game {
         }
     }
 
-    // pre: an object containing the move parameters
-    //      x is an integer representing the column (zero-indexed) where the move is to be made. Required for a human-made move, optional and has no effect on an AI move. 
+    // pre: x is an integer representing the column (zero-indexed) where the move is to be made. Required for a human-made move, optional and has no effect on an AI move. 
     //      token is an integer representing the player making the move. Required for both humans and AI. 
     // post: Makes the move and returns an object of the form {x,y,token,state}, or null if the move is invalid. 
     //      x and y are the coordinates of the move (zero-indexed)
     //      token is the input token. 
     //      The returned state is as follows: 0 if the game is ongoing, 1 if the game has ended in a draw, 2 if the player making the move has won.
-    makeMove({ x = null, token }) {
+    makeMove(token, x = null) {
         if (token != this.turnToPlay) {
             return null;
         }

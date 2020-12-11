@@ -29,9 +29,9 @@ function computeScore(board, token, players, victoryCondition, depth) {
         return new Turn([0], 0, depth, depth);
     }
     let moves = [];
-    let score = 2;
-    let defeatDepth = Number.MIN_SAFE_INTEGER;
-    let victoryDepth = Number.MAX_SAFE_INTEGER;
+    let score = 2; // Highest score next player can achieve, to be minimized
+    let defeatDepth = Number.MIN_SAFE_INTEGER; // If defeat is guaranteed, the largest amount of turns till defeat
+    let victoryDepth = Number.MAX_SAFE_INTEGER; // If victory is guaranteed, the minimum amount of turns till victory
     for (let x = 0; x < board.getWidth(); x++) {
         if (board.makeMove(x, token) == -1) {
             continue;
@@ -42,7 +42,7 @@ function computeScore(board, token, players, victoryCondition, depth) {
         }
         let curMove = computeScore(board, token % 2 + 1, players, victoryCondition, depth + 1);
         let curScore = curMove.score;
-        if (curScore < score) {
+        if (curScore < score) { // The current move is better than any other so far
             moves = [x];
             score = curScore;
         } else if (curScore == 1 && curMove.victoryDepth > defeatDepth && score == 1) {
