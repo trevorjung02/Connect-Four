@@ -1,0 +1,5 @@
+We learned how to create a web application, and in particular how to use sockets, which was a scary technology at first. 
+One of the most enjoyable aspects of the project was creating the AI, which was fun to think about in terms of figuring out the right algorithms to use. 
+In addition, it was fun to create the graphics of the program, and see the project as a polished game.  
+The most challenging part of the project was getting the communication right, and figuring out how to code together.
+We found that there were a lot of useful tutorials online that helped with understanding web development, in particular some of the Traversy Media crash courses. 
